@@ -40,7 +40,7 @@ jobs:
           version: v1.60
           working-directory: ./packages/api
 
-      - name: Lint API
+      - name: Lint Migrate
         uses: golangci/golangci-lint-action@v6
         with:
           version: v1.60
