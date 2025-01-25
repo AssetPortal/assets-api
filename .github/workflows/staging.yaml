@@ -34,6 +34,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and Push Docker Image
+        working-directory: ./packages/api
         run: |
           docker buildx build \
             --platform linux/amd64 \

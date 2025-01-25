@@ -40,7 +40,7 @@ jobs:
           version: v1.60
           working-directory: ./packages/api
 
-      - name: Lint API
+      - name: Lint Migrate
         uses: golangci/golangci-lint-action@v6
         with:
           version: v1.60
@@ -53,3 +53,11 @@ jobs:
       - name: Build
         working-directory: ./packages/api
         run: go build cmd/main.go
+
+      - name: Build Docker Image
+        working-directory: ./packages/api
+        run: |
+          docker buildx build \
+            --platform linux/amd64 \
+            --tag assetportal/assets-api:${{ github.sha }} \
+            .
