@@ -1,0 +1,41 @@
+name: Staging
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'packages/**/*.go'
+
+jobs:
+  build_and_push_docker_image:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_REPO: assetportal/assets-api
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4.1.4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/docker
+          key: ${{ runner.os }}-docker-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-docker
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker buildx build \
+            --platform linux/amd64 \
+            --tag assetportal/assets-api:${{ github.sha }} \
+            --push .

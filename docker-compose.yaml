@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  auth:
+    networks:
+      - assets
+    image: polkadot-auth
+    
+  api:
+    networks:
+      - assets
+    build:
+      context: packages/api/
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - RW_DB_URL=postgres://postgres:password@db:5432/assets?sslmode=disable
+      - PORT=8000
+      - BUCKET_NAME=test
+      - BUCKET_REGION=us-east-1
+      - AUTH_API_URL=http://auth:3000
+    depends_on:
+      - db
+      - auth
+
+  db:
+    networks:
+      - assets
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: database
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+
+networks:
+  assets:
+    driver: bridge

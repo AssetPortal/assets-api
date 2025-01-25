@@ -1,0 +1,55 @@
+name: CI
+on:
+  pull_request:
+    branches: ["*"]
+    paths:
+      - 'packages/**/*.go' 
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4.1.4
+
+      - name: Setup go
+        uses: actions/setup-go@v5.0.1
+        with:
+          go-version-file: 'go.work'
+
+      - name: Cache Go Modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('packages/api/go.sum','packages/migrate/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-assets
+
+      - name: Download Go Modules
+        run: go mod download
+
+      - name: Lint API
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.60
+          working-directory: ./packages/api
+
+      - name: Lint API
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.60
+          working-directory: ./packages/migrate
+
+      - name: Run Tests
+        working-directory: ./packages/api
+        run: go test ./...
+
+      - name: Build
+        working-directory: ./packages/api
+        run: go build cmd/main.go
