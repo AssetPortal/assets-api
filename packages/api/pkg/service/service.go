@@ -52,7 +52,6 @@ func NewService(assetsApp *app.AssetsApp, polkadotMiddleware *polkadotMiddleware
 }
 
 func (srv *Service) Setup() {
-
 	router := chi.NewRouter()
 	cfg := srv.assetsApp.Config()
 	router.Use(middleware.Recoverer)
@@ -65,6 +64,11 @@ func (srv *Service) Setup() {
 		AllowedHeaders:   []string{"*"},
 		MaxAge:           300,
 	}).Handler)
+
+	router.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
 
 	router.Get("/nonce", srv.CreateToken)
 	router.With(httpin.NewInput(model.UploadImageInput{})).Post("/upload", srv.UploadImage)

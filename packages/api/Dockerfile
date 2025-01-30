@@ -12,11 +12,13 @@ RUN go build -o ./build/bin/api ./cmd/main.go
 
 FROM alpine
 
+ARG SERVER_PORT=8000
+
 COPY --from=builder go/src/api/build/bin/api /usr/local/bin
 
 WORKDIR /usr/local/bin
 
-EXPOSE 8000
+EXPOSE ${SERVER_PORT}
 
 RUN apk --no-cache add ca-certificates
 
