@@ -67,7 +67,6 @@ func (srv *Service) Setup() {
 
 	router.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
 	})
 
 	router.Get("/nonce", srv.CreateToken)
