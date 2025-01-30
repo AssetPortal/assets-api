@@ -13,6 +13,9 @@ jobs:
     deploy:
         name: "Build docker and publish to ECR"
         runs-on: ubuntu-latest
+        defaults:
+          run:
+            working-directory: ./packages/api
 
         steps:
         - name: Check out code
