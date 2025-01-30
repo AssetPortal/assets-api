@@ -13,9 +13,6 @@ jobs:
     deploy:
         name: "Build docker and publish to ECR"
         runs-on: ubuntu-latest
-        defaults:
-          run:
-            working-directory: ./packages/api
 
         steps:
         - name: Check out code
@@ -37,5 +34,6 @@ jobs:
             ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
             ECR_REPOSITORY: assets/assets-api
           run: |
+            cd packages/api
             docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.ref_name }} .
             docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.ref_name }}
