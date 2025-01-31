@@ -35,5 +35,6 @@ jobs:
             ECR_REPOSITORY: assets/assets-api
           run: |
             cd packages/api
-            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.ref_name }} .
+            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.ref_name }} -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
             docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.ref_name }}
+            docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
