@@ -66,7 +66,7 @@ func (srv *Service) Setup() {
 			render.JSON(w, r, model.NewResponseError(fmt.Sprintf("Too many requests: max is %d per second", cfg.MaxRequestsPerSecond)))
 		}),
 	))
-	router.Use(middleware.Timeout(time.Duration(cfg.HTTPTimeout) * time.Second))
+	router.Use(middleware.Timeout(cfg.HTTPTimeout))
 	router.Use(cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
@@ -77,7 +77,7 @@ func (srv *Service) Setup() {
 	}).Handler)
 
 	router.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
+		render.Status(r, http.StatusOK)
 	})
 
 	router.Get("/nonce", srv.CreateToken)
