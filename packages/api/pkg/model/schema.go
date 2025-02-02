@@ -143,6 +143,19 @@ func (c *UpdateAssetInput) Validate() error {
 	return nil
 }
 
+type DeleteAssetInput struct {
+	*AuthHeaders
+	ID string `in:"path=id"`
+}
+
+func (c *DeleteAssetInput) Validate() error {
+	if err := validateID(c.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type GetAssetByIDInput struct {
 	ID string `in:"path=id"`
 }
@@ -179,6 +192,7 @@ func (c *GetAssetsInput) Validate() error {
 			return errors.New("order fields are: id, address, and created_at")
 		}
 	}
+	c.Pagination.Validate()
 	return nil
 }
 
