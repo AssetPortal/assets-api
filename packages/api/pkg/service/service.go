@@ -58,7 +58,14 @@ func (srv *Service) Setup() {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.Compress(5))
 	router.Use(middleware.Logger)
-	router.Use(httprate.LimitByIP(cfg.MaxRequestsPerSecond, time.Second))
+	router.Use(httprate.Limit(
+		cfg.MaxRequestsPerSecond,
+		time.Second,
+		httprate.WithLimitHandler(func(w http.ResponseWriter, r *http.Request) {
+			render.Status(r, http.StatusTooManyRequests)
+			render.JSON(w, r, model.NewResponseError(fmt.Sprintf("Too many requests: max is %d per second", cfg.MaxRequestsPerSecond)))
+		}),
+	))
 	router.Use(middleware.Timeout(time.Duration(cfg.HTTPTimeout) * time.Second))
 	router.Use(cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
@@ -107,17 +114,3 @@ func (srv *Service) Start() {
 		panic(err)
 	}
 }
-
-// type responseWriter struct {
-// 	http.ResponseWriter
-// 	StatusCode int
-// }
-
-// func NewResponseWriter(w http.ResponseWriter) *responseWriter {
-// 	return &responseWriter{w, http.StatusOK}
-// }
-
-// func (rw *responseWriter) WriteHeader(code int) {
-// 	rw.StatusCode = code
-// 	rw.ResponseWriter.WriteHeader(code)
-// }
