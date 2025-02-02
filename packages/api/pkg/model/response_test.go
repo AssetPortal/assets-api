@@ -39,3 +39,9 @@ func TestNewResponseDataError(t *testing.T) {
 	assert.Equal(t, "Failed to process data", resp.Message)
 	assert.Nil(t, resp.Data)
 }
+
+func TestNewResponseEmpty(t *testing.T) {
+	resp := model.NewResponseEmpty()
+	assert.True(t, resp.OK)
+	assert.Nil(t, resp.Data)
+}

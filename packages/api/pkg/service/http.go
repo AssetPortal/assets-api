@@ -71,16 +71,38 @@ func (srv *Service) UpdateAsset(w http.ResponseWriter, r *http.Request) {
 
 	err := srv.assetsApp.UpdateAsset(r.Context(), asset)
 	if err != nil {
-		if err == appError.ErrCreatingAssetIDExists {
-			render.Status(r, http.StatusUnprocessableEntity)
+		if err == appError.ErrAssetDoesNotBelongToTheUser {
+			render.Status(r, http.StatusNotFound)
 		} else {
 			render.Status(r, http.StatusInternalServerError)
 		}
 		render.JSON(w, r, model.NewResponseError(err.Error()))
 
 	} else {
-		render.Status(r, http.StatusCreated)
-		render.JSON(w, r, model.NewResponseData(asset))
+		render.Status(r, http.StatusOK)
+		render.JSON(w, r, model.NewResponseEmpty())
+	}
+}
+func (srv *Service) DeleteAsset(w http.ResponseWriter, r *http.Request) {
+	deleteAsset := r.Context().Value(httpin.Input).(*model.DeleteAssetInput)
+	if err := deleteAsset.Validate(); err != nil {
+		render.Status(r, http.StatusUnprocessableEntity)
+		render.JSON(w, r, model.NewResponseError(err.Error()))
+		return
+	}
+
+	err := srv.assetsApp.DeleteAsset(r.Context(), deleteAsset.ID, deleteAsset.Address)
+	if err != nil {
+		if err == appError.ErrAssetDoesNotBelongToTheUser {
+			render.Status(r, http.StatusNotFound)
+		} else {
+			render.Status(r, http.StatusInternalServerError)
+		}
+		render.JSON(w, r, model.NewResponseError(err.Error()))
+
+	} else {
+		render.Status(r, http.StatusOK)
+		render.JSON(w, r, model.NewResponseEmpty())
 	}
 }
 
