@@ -14,13 +14,11 @@ import (
 func (srv *Service) CreateToken(w http.ResponseWriter, r *http.Request) {
 	token, err := srv.assetsApp.CreateToken(r.Context())
 	if err != nil {
-		render.Status(r, http.StatusOK)
-		render.JSON(w, r, Error{
-			Error: err.Error(),
-		})
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, model.NewResponseError(err.Error()))
 	} else {
 		render.Status(r, http.StatusOK)
-		render.JSON(w, r, token)
+		render.JSON(w, r, model.NewResponseData(token))
 	}
 }
 
