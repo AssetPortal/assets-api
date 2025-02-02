@@ -13,7 +13,7 @@ func TestMustGetConfig_Success(t *testing.T) {
 	// Set the environment variables
 	os.Setenv("SERVICE_ADDRESS", ":8080")
 	os.Setenv("HTTP_TIMEOUT", "30s")
-	os.Setenv("RW_DB_URL", "localhost:5432")
+	os.Setenv("DATABASE_URL", "localhost:5432")
 	os.Setenv("MAX_REQUESTS_PER_SECOND", "20")
 	os.Setenv("LOG_LEVEL", "info")
 	os.Setenv("TOKEN_EXPIRATION", "10m")
@@ -34,7 +34,7 @@ func TestMustGetConfig_Success(t *testing.T) {
 	// Assert the configuration values are correctly set
 	assert.Equal(t, ":8080", cfg.ServiceAddress)
 	assert.Equal(t, 30*time.Second, cfg.HTTPTimeout)
-	assert.Equal(t, "localhost:5432", cfg.RWDBURL)
+	assert.Equal(t, "localhost:5432", cfg.DatabaseConfiguration.URL)
 	assert.Equal(t, 20, cfg.MaxRequestsPerSecond)
 	assert.Equal(t, "info", cfg.LogLevel)
 	assert.Equal(t, 10*time.Minute, cfg.TokenExpiration)
@@ -72,8 +72,8 @@ func TestMustGetConfig_DefaultValues(t *testing.T) {
 	// Assert default values are used
 	assert.Equal(t, ":8000", cfg.ServiceAddress)
 	assert.Equal(t, 20*time.Second, cfg.HTTPTimeout)
-	assert.Equal(t, "10", cfg.RWDBURL)
-	assert.Equal(t, 10, cfg.MaxRequestsPerSecond)
+	assert.Equal(t, "", cfg.DatabaseConfiguration.URL)
+	assert.Equal(t, 3, cfg.MaxRequestsPerSecond)
 	assert.Equal(t, "warn", cfg.LogLevel)
 	assert.Equal(t, 5*time.Minute, cfg.TokenExpiration)
 	assert.Equal(t, "", cfg.AuthConfiguration.APIURL)

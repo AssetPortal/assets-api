@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"time"
 
 	"database/sql"
 
@@ -39,7 +38,7 @@ func main() {
 	logger.SetLevel(lvl)
 
 	// Open a database connection
-	sqlDB, err := sql.Open("postgres", cfg.RWDBURL)
+	sqlDB, err := sql.Open("postgres", cfg.DatabaseConfiguration.URL)
 	if err != nil {
 		log.Fatalf("failed to connect to PostgreSQL: %v", err)
 	}
@@ -51,10 +50,10 @@ func main() {
 	}
 
 	// Set connection pool settings
-	sqlDB.SetMaxOpenConns(10)                  // Maximum open connections
-	sqlDB.SetMaxIdleConns(5)                   // Maximum idle connections
-	sqlDB.SetConnMaxIdleTime(5 * time.Minute)  // Idle timeout
-	sqlDB.SetConnMaxLifetime(30 * time.Minute) // Max lifetime of a connection
+	sqlDB.SetMaxOpenConns(cfg.DatabaseConfiguration.MaxOpenConns)       // Maximum open connections
+	sqlDB.SetMaxIdleConns(cfg.DatabaseConfiguration.MaxIdleConns)       // Maximum idle connections
+	sqlDB.SetConnMaxIdleTime(cfg.DatabaseConfiguration.ConnMaxIdleTime) // Idle timeout
+	sqlDB.SetConnMaxLifetime(cfg.DatabaseConfiguration.ConnMaxLifetime) // Max lifetime of a connection
 
 	// Initialize Bun with database/sql and PostgreSQL dialect
 	db := bun.NewDB(sqlDB, pgdialect.New())
@@ -64,7 +63,7 @@ func main() {
 		Timeout: cfg.AuthConfiguration.HTTPTimeout,
 	}
 	authClient := auth.NewPolkadotClient(cfg.AuthConfiguration.APIURL, httpClient)
-	authMiddleware := middleware.NewPolkadotAuth(tokensRepository, authClient)
+	authMiddleware := middleware.NewPolkadotAuth(tokensRepository, authClient, cfg.AuthConfiguration.Enabled)
 
 	staticCreds := credentials.NewStaticCredentialsProvider(
 		cfg.BucketConfiguration.AccessKey,
