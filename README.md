@@ -1,3 +1,4 @@
+[![CI](https://github.com/AssetPortal/assets-api/actions/workflows/ci.yaml/badge.svg)](https://github.com/AssetPortal/assets-api/actions/workflows/ci.yaml)[![Staging](https://github.com/AssetPortal/assets-api/actions/workflows/staging.yaml/badge.svg)](https://github.com/AssetPortal/assets-api/actions/workflows/staging.yaml)[![Production](https://github.com/AssetPortal/assets-api/actions/workflows/production.yaml/badge.svg)](https://github.com/AssetPortal/assets-api/actions/workflows/production.yaml)
 # Assets API
 
 ## Overview
