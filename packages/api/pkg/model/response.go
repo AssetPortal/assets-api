@@ -31,3 +31,9 @@ func NewResponseData(data interface{}) Response {
 		Data: dataJSON,
 	}
 }
+
+func NewResponseEmpty() Response {
+	return Response{
+		OK: true,
+	}
+}

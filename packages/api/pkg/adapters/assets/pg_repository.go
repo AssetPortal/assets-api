@@ -74,7 +74,7 @@ func (repo *AssetsRepository) GetAssets(ctx context.Context, filters *model.GetA
 }
 
 func (repo *AssetsRepository) UpdateAsset(ctx context.Context, asset *model.Asset) error {
-	res, err := repo.db.NewUpdate().Model(asset).WherePK().Exec(ctx)
+	res, err := repo.db.NewUpdate().Model(asset).Where("id = ? AND address = ?", asset.ID, asset.Address).OmitZero().Exec(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to update asset in database: '%s'", err)
 	}
@@ -88,7 +88,7 @@ func (repo *AssetsRepository) UpdateAsset(ctx context.Context, asset *model.Asse
 	return nil
 }
 func (repo *AssetsRepository) DeleteAsset(ctx context.Context, id, address string) error {
-	res, err := repo.db.NewDelete().Model(&model.Asset{ID: id, Address: address}).WherePK().Exec(ctx)
+	res, err := repo.db.NewDelete().Model(&model.Asset{ID: id, Address: address}).Where("id = ? AND address = ?", id, address).Exec(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to delete asset in database: '%s'", err)
 	}

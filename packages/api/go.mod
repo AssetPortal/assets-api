@@ -3,7 +3,6 @@ module github.com/AssetPortal/assets-api
 go 1.23.3
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/aws/aws-sdk-go-v2 v1.33.0
 	github.com/aws/aws-sdk-go-v2/config v1.29.1
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.54
@@ -11,6 +10,7 @@ require (
 	github.com/caarlos0/env/v11 v11.2.2
 	github.com/ggicci/httpin v0.19.0
 	github.com/go-chi/chi/v5 v5.1.0
+	github.com/go-chi/httprate v0.14.1
 	github.com/go-chi/render v1.0.3
 	github.com/lib/pq v1.10.9
 	github.com/rs/cors v1.11.1
@@ -37,6 +37,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.28.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.9 // indirect
 	github.com/aws/smithy-go v1.22.1 // indirect
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/ggicci/owl v0.8.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
@@ -52,9 +53,9 @@ require (
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
-	golang.org/x/crypto v0.22.0 // indirect
-	golang.org/x/net v0.24.0 // indirect
-	golang.org/x/sys v0.27.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/crypto v0.31.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

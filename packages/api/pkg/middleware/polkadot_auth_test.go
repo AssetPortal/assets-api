@@ -26,7 +26,7 @@ func TestPolkadotAuthMiddleware(t *testing.T) {
 		Message:   "valid-message",
 	}
 
-	polkadotAuth := middleware.NewPolkadotAuth(tokensRepoMock, authClientMock)
+	polkadotAuth := middleware.NewPolkadotAuth(tokensRepoMock, authClientMock, true)
 
 	tokensRepoMock.On("GetToken", mock.Anything, "valid-message").Return(&model.Token{Token: "valid-message"}, nil)
 
@@ -55,6 +55,30 @@ func TestPolkadotAuthMiddleware(t *testing.T) {
 
 	rr := httptest.NewRecorder()
 
+	router.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code)
+	assert.Contains(t, rr.Body.String(), "Success")
+
+	tokensRepoMock.AssertExpectations(t)
+	authClientMock.AssertExpectations(t)
+}
+
+func TestPolkadotAuthMiddlewareDisabled(t *testing.T) {
+	tokensRepoMock := new(tokensMock.Repository)
+	authClientMock := new(authMock.Client)
+	polkadotAuth := middleware.NewPolkadotAuth(tokensRepoMock, authClientMock, false)
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		render.JSON(w, r, model.NewResponseError("Success"))
+	})
+
+	router := chi.NewRouter()
+	router.With(
+		httpin.NewInput(model.AuthHeaders{}),
+	).With(polkadotAuth.Middleware).Get("/test", handler)
+
+	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	rr := httptest.NewRecorder()
 	router.ServeHTTP(rr, req)
 
 	assert.Equal(t, http.StatusOK, rr.Code)

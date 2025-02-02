@@ -16,6 +16,7 @@ import (
 	"github.com/rs/cors"
 
 	polkadotMiddleware "github.com/AssetPortal/assets-api/pkg/middleware"
+	"github.com/go-chi/httprate"
 )
 
 func CustomErrorHandler(rw http.ResponseWriter, r *http.Request, err error) {
@@ -55,9 +56,19 @@ func (srv *Service) Setup() {
 	router := chi.NewRouter()
 	cfg := srv.assetsApp.Config()
 	router.Use(middleware.Recoverer)
+	router.Use(middleware.Compress(5))
+	router.Use(middleware.Logger)
+	router.Use(httprate.Limit(
+		cfg.MaxRequestsPerSecond,
+		time.Second,
+		httprate.WithLimitHandler(func(w http.ResponseWriter, r *http.Request) {
+			render.Status(r, http.StatusTooManyRequests)
+			render.JSON(w, r, model.NewResponseError(fmt.Sprintf("Too many requests: max is %d per second", cfg.MaxRequestsPerSecond)))
+		}),
+	))
 	router.Use(middleware.Timeout(time.Duration(cfg.HTTPTimeout) * time.Second))
 	router.Use(cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"}, // TODO: fix
+		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		Debug:            false,
 		AllowCredentials: true,
@@ -82,8 +93,17 @@ func (srv *Service) Setup() {
 	router.With(
 		httpin.NewInput(model.GetAssetByIDInput{}),
 	).Get("/assets/{id}", srv.GetAssetByID)
-	// delete //TODO
-	// update //TODO
+	router.With(
+		httpin.NewInput(model.AuthHeaders{}),
+	).With(srv.polkadotMiddleware.Middleware).With(
+		httpin.NewInput(model.UpdateAssetInput{}),
+	).Put("/assets/{id}", srv.UpdateAsset)
+	router.With(
+		httpin.NewInput(model.AuthHeaders{}),
+	).With(srv.polkadotMiddleware.Middleware).With(
+		httpin.NewInput(model.DeleteAssetInput{}),
+	).Delete("/assets/{id}", srv.DeleteAsset)
+
 	srv.HTTPServer = &http.Server{Addr: cfg.ServiceAddress, Handler: router}
 }
 
@@ -94,17 +114,3 @@ func (srv *Service) Start() {
 		panic(err)
 	}
 }
-
-// type responseWriter struct {
-// 	http.ResponseWriter
-// 	StatusCode int
-// }
-
-// func NewResponseWriter(w http.ResponseWriter) *responseWriter {
-// 	return &responseWriter{w, http.StatusOK}
-// }
-
-// func (rw *responseWriter) WriteHeader(code int) {
-// 	rw.StatusCode = code
-// 	rw.ResponseWriter.WriteHeader(code)
-// }
