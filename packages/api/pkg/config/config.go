@@ -22,7 +22,7 @@ type DatabaseConfiguration struct {
 	MaxIdleConns    int           `env:"MAX_IDLE_CONNS" envDefault:"5"`
 	ConnMaxIdleTime time.Duration `env:"CONN_MAX_IDLE_TIME" envDefault:"5m"`
 	ConnMaxLifetime time.Duration `env:"CONN_MAX_LIFETIME" envDefault:"30m"`
-	URL             string        `env:"URL"`
+	URL             string        `env:"URL" envDefault:"localhost:5432"`
 }
 type AuthConfiguration struct {
 	APIURL      string        `env:"API_URL"`

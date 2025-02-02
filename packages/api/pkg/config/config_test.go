@@ -72,7 +72,7 @@ func TestMustGetConfig_DefaultValues(t *testing.T) {
 	// Assert default values are used
 	assert.Equal(t, ":8000", cfg.ServiceAddress)
 	assert.Equal(t, 20*time.Second, cfg.HTTPTimeout)
-	assert.Equal(t, "", cfg.DatabaseConfiguration.URL)
+	assert.Equal(t, "localhost:5432", cfg.DatabaseConfiguration.URL)
 	assert.Equal(t, 3, cfg.MaxRequestsPerSecond)
 	assert.Equal(t, "warn", cfg.LogLevel)
 	assert.Equal(t, 5*time.Minute, cfg.TokenExpiration)
