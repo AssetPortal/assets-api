@@ -45,14 +45,17 @@ func (p *PolkadotAuth) Middleware(next http.Handler) http.Handler {
 			dbToken, err := p.tokensRepo.GetToken(r.Context(), headers.Message)
 			if err != nil {
 				logrus.Errorf("Error retrieving token: %s", err)
+				render.Status(r, http.StatusInternalServerError)
 				render.JSON(w, r, model.NewResponseError("Cannot verify the token"))
 				return
 			}
 			if dbToken == nil {
+				render.Status(r, http.StatusBadRequest)
 				render.JSON(w, r, model.NewResponseError("Message was not generated with /nonce"))
 				return
 			}
 			if !dbToken.IsValid() {
+				render.Status(r, http.StatusUnauthorized)
 				render.JSON(w, r, model.NewResponseError("Invalid or expired token"))
 				return
 			}
@@ -61,10 +64,12 @@ func (p *PolkadotAuth) Middleware(next http.Handler) http.Handler {
 			auth, err := p.authClient.VerifySignature(r.Context(), headers.Message, headers.Address, headers.Signature)
 			if err != nil {
 				logrus.Errorf("Error verifying the signature: %s", err)
+				render.Status(r, http.StatusInternalServerError)
 				render.JSON(w, r, model.NewResponseError("Cannot verify signature now"))
 				return
 			}
 			if !auth.OK {
+				render.Status(r, http.StatusUnauthorized)
 				render.JSON(w, r, model.NewResponseError("Invalid authentication: "+auth.Message))
 				return
 			}
@@ -72,6 +77,7 @@ func (p *PolkadotAuth) Middleware(next http.Handler) http.Handler {
 			// Mark the token as used
 			if err := p.tokensRepo.MarkTokenAsUsed(r.Context(), headers.Message); err != nil {
 				logrus.Errorf("Error marking token as used: %s", err)
+				render.Status(r, http.StatusInternalServerError)
 				render.JSON(w, r, model.NewResponseError("Failed to mark token as used"))
 				return
 			}
