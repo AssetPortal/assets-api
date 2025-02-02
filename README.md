@@ -24,6 +24,11 @@ The endpoints that require authentication needs to have three headers in their r
 - `"X-Signature"`: The message signed with the private key of the account. This signature is used to verify the authenticity of the request.
 - `"X-Address"`: The address of the account used to sign the message. This address is used to identify the user making the request.
 
+### Errors
+
+- **400 Bad Request**: The message was not generated with the `GET /nonce`. 
+- **401 Unauthorized**: Invalid or expired token.
+- **500 internal server error**: Internal error.
 
 ## API Endpoints
 
@@ -44,13 +49,20 @@ Empty
 Retrieves a nonce for authentication. It must be signed and set to the `MESSAGE` header in the endpoints that require authentication. 
 
 #### Response
-- **200 OK**: with the nonce.
+- **200 OK**: It returns the nonce.
 
 #### Example Response
 
 ```json
 {
-  "nonce": "nonce"
+    "ok": true,
+    "data": {
+        "id": 9,
+        "token": "db1dce7837b0976fe042cda63c8129e4ea396407158cc494c4b1250f368d58a8",
+        "created_at": "2025-02-02T18:52:04.3747-03:00",
+        "expires_at": "2025-02-02T18:57:04.3747-03:00",
+        "used": false
+    }
 }
 ```
 
