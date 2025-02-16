@@ -65,6 +65,34 @@ Retrieves a nonce for authentication. It must be signed and set to the `MESSAGE`
     }
 }
 ```
+### **POST /upload**
+
+#### Description
+It allows clients to upload an image file to the object storage. The uploaded file is validated and stored, and a URL to the uploaded file is returned.
+
+#### Request
+**Headers**
+*Content-Type: multipart/form-data*
+**Form Data**
+*id* (string): The unique identifier for the image. Must be a valid Base58 string.
+*file* (file): The image file to be uploaded. Must be a valid image file (JPEG, PNG, or GIF) and not exceed 5MB in size.
+
+#### Response
+- **200 OK**  The file was successfully uploaded.
+- **400 Bad Request** The file type is invalid or the file size exceeds the limit.
+- **422 Unprocessable Entity**: The provided id is invalid or the file is missing.
+- **500 Internal Server Error** An error occurred while processing the file.
+
+#### Example Response
+
+```json
+{
+  "ok": true,
+  "data": {
+    "url": "https://bucket-name.s3.amazonaws.com/123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz_1633024800.jpg"
+  }
+}
+```
 
 ### **GET /assets**
 
