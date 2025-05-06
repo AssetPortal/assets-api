@@ -17,8 +17,9 @@ func TestCreateAssetInputValidation(t *testing.T) {
 			name: "valid input",
 			input: model.CreateAssetInput{
 				NewAsset: model.NewAsset{
-					ID:    "1a2b3c",
-					Image: strPtr("https://example.com/image.jpg"),
+					ID:         "1a2b3c",
+					Image:      strPtr("https://example.com/image.jpg"),
+					Blockchain: "polkadot",
 				},
 			},
 			wantErr: false,
@@ -39,6 +40,17 @@ func TestCreateAssetInputValidation(t *testing.T) {
 				NewAsset: model.NewAsset{
 					ID:    "1a2b3c",
 					Image: strPtr("invalid-url"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalid blockchain",
+			input: model.CreateAssetInput{
+				NewAsset: model.NewAsset{
+					ID:         "1a2b3c",
+					Image:      strPtr("https://example.com/image.jpg"),
+					Blockchain: "invalid",
 				},
 			},
 			wantErr: true,
@@ -86,6 +98,16 @@ func TestUpdateAssetInputValidation(t *testing.T) {
 				ID: "1a2b3c",
 				UpdateAsset: model.UpdateAsset{
 					Image: strPtr("invalid-url"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalid blockchain",
+			input: model.UpdateAssetInput{
+				ID: "1a2b3c",
+				UpdateAsset: model.UpdateAsset{
+					Blockchain: strPtr("invalid"),
 				},
 			},
 			wantErr: true,

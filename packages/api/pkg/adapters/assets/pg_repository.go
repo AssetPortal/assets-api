@@ -50,6 +50,10 @@ func (repo *AssetsRepository) GetAssets(ctx context.Context, filters *model.GetA
 		query = query.Where("id = ?", *filters.ID)
 	}
 
+	if filters.Blockchain != nil {
+		query = query.Where("blockchain = ?", *filters.Blockchain)
+	}
+
 	if filters.Order.Order != nil {
 		orderClause := fmt.Sprintf("'%s' '%s'", *filters.Order.Order, "ASC")
 		if filters.Order.Ascending != nil && !*filters.Order.Ascending {
