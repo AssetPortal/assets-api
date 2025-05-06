@@ -102,6 +102,7 @@ Retrieves a list of assets.
 ### Query arguments
 - **address**: string. It must be a valid polkadot address. 
 - **id**: string
+- **blockchain**: string. It must be either 'polkadot' or 'kusama'
 - **order**: string. It orders the results using a field. It must be `id`, `address` or `created_at`.
 - **ascending**: bool. It defines if the order is ascending or descendingl It's used along with `order`.
 - **limit**: int. The maximum number of items to return. If not specified or greater than the maximum limit, it defaults to 100.
@@ -122,10 +123,11 @@ Retrieves a list of assets.
             "id": "asset_id",
             "description": "asset_description",
             "address": "owner",
+            "blockchain": "polkadot|kusama",
             "image": "asset_image_url",
             "social": {
-            "twitter": "twitter_handle",
-            "facebook": "facebook_handle"
+              "twitter": "twitter_handle",
+              "facebook": "facebook_handle"
             }
         }
     ]
@@ -147,6 +149,7 @@ Retrieves an asset by its ID.
   "ok": true,
   "data": {
     "id": "asset_id",
+    "blockchain": "polkadot|kusama",
     "description": "asset_description",
     "image": "asset_image_url",
     "social": {
@@ -168,6 +171,7 @@ Creates a new asset. It requires authentication.
   "data": {
     "id": "asset_id",
     "description": "asset_description",
+    "blockchain": "polkadot|kusama",
     "image": "asset_image_url",
     "social": {
         "twitter": "twitter_handle",
@@ -189,6 +193,7 @@ Creates a new asset. It requires authentication.
   "data": {
     "id": "asset_id",
     "description": "asset_description",
+    "blockchain": "polkadot|kusama",
     "image": "asset_image_url",
     "social": {
         "twitter": "twitter_handle",
@@ -205,7 +210,12 @@ It updates an asset. Only its owner can do it. It requires authentication.
 #### Request Body
 ```json
 {
-    "ok": true
+    "description": "asset_description",
+    "blockchain": "polkadot|kusama",
+    "image": "asset_image_url",
+    "social": {
+        "twitter": "twitter_handle",
+        "facebook": "facebook_handle"
 }
 
 ```
