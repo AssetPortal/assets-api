@@ -52,6 +52,14 @@ func validateDescription(description *string) error {
 	}
 	return nil
 }
+func validateBlockchain(blockchain *string) error {
+	if blockchain != nil {
+		if *blockchain != POLKADOT && *blockchain != KUSAMA {
+			return errors.New("blockchain must be either 'polkadot' or 'kusama'")
+		}
+	}
+	return nil
+}
 
 func validateSocial(social *map[string]string) error {
 	if social != nil {
@@ -87,12 +95,14 @@ type AuthHeaders struct {
 
 type NewAsset struct {
 	ID          string             `json:"id"`
+	Blockchain  string             `json:"blockchain"`
 	Description *string            `json:"description"`
 	Image       *string            `json:"image" validate:"nonzero"`
 	Social      *map[string]string `json:"social"`
 }
 
 type UpdateAsset struct {
+	Blockchain  *string            `json:"blockchain"`
 	Description *string            `json:"description"`
 	Image       *string            `json:"image" validate:"nonzero"`
 	Social      *map[string]string `json:"social"`
@@ -118,6 +128,10 @@ func (c *CreateAssetInput) Validate() error {
 	if err := validateSocial(c.Social); err != nil {
 		return err
 	}
+
+	if err := validateBlockchain(&c.Blockchain); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -138,6 +152,9 @@ func (c *UpdateAssetInput) Validate() error {
 		return err
 	}
 	if err := validateSocial(c.Social); err != nil {
+		return err
+	}
+	if err := validateBlockchain(c.Blockchain); err != nil {
 		return err
 	}
 	return nil
@@ -165,8 +182,9 @@ func (c *GetAssetByIDInput) Validate() error {
 }
 
 type GetAssetsInput struct {
-	Address *string `in:"query=address"`
-	ID      *string `in:"query=id"`
+	Address    *string `in:"query=address"`
+	ID         *string `in:"query=id"`
+	Blockchain *string `in:"query=blockchain"`
 	Order
 	Pagination
 }
@@ -184,6 +202,11 @@ func (c *GetAssetsInput) Validate() error {
 		re := regexp.MustCompile(AlphanumericPattern)
 		if !re.MatchString(*c.Address) {
 			return errors.New("address must only contain alphanumeric characters")
+		}
+	}
+	if c.Blockchain != nil {
+		if err := validateBlockchain(c.Blockchain); err != nil {
+			return err
 		}
 	}
 	if c.Order.Order != nil {

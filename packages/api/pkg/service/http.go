@@ -35,6 +35,7 @@ func (srv *Service) CreateAsset(w http.ResponseWriter, r *http.Request) {
 		Image:       createAsset.Image,
 		Social:      createAsset.Social,
 		Address:     createAsset.Address,
+		Blockchain:  &createAsset.Blockchain,
 	}
 
 	asset, err := srv.assetsApp.CreateAsset(r.Context(), asset)
@@ -65,6 +66,7 @@ func (srv *Service) UpdateAsset(w http.ResponseWriter, r *http.Request) {
 		Image:       updateAsset.Image,
 		Social:      updateAsset.Social,
 		Address:     updateAsset.Address,
+		Blockchain:  updateAsset.Blockchain,
 	}
 
 	err := srv.assetsApp.UpdateAsset(r.Context(), asset)

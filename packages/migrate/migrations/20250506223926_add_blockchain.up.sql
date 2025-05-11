@@ -1,0 +1,1 @@
+ALTER TABLE assets ADD COLUMN blockchain TEXT NOT NULL;
